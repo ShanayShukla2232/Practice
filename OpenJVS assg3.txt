@@ -1,0 +1,131 @@
+// Our first task is to import the table from the CSV table given to us 
+import com.olf.openjvs.*;
+import com.olf.openjvs.enums.*;
+
+public class SampleScript implements IScript
+{
+	public void execute(IContainerContext context) throws OException
+	{	
+		String filename;
+		Table script_table1;
+		Table script_table2;
+
+		filename = "C:/data/TOF_scripts1.txt";
+
+		script_table1 = Table.tableNew();
+
+		script_table1.setTableTitle("script_table");
+
+		script_table1.addCol("MARKET", COL_TYPE_ENUM.COL_STRING);
+		script_table1.addCol("PRODUCT_ID", COL_TYPE_ENUM.COL_INT);
+		script_table1.addCol("EXPIRY_YEAR", COL_TYPE_ENUM.COL_INT);
+		script_table1.addCol("EXPIRY_MONTH", COL_TYPE_ENUM.COL_INT;
+		script_table1.addCol("FIRST_TRADING_DATE", COL_TYPE_ENUM.COL_STRING);
+		script_table1.addCol("LAST_TRADING_DATE", COL_TYPE_ENUM.COL_STRING);
+		script_table1.addCol("EXPIRY_DATE", COL_TYPE_ENUM.COL_STRING);
+		script_table1.addCol("PRICE",COL_TYPE_ENUM.COL_INT);
+		script_table1.addCol("CURRENCY", COL_TYPE_ENUM.COL_STRING);
+		
+		script_table1.inputFromCSVFile(filename);
+
+		//script_table1.viewTable();
+		
+		filename = "C:/data/TOF_scripts2.txt";
+
+		script_table2 = Table.tableNew();
+
+		script_table2.setTableTitle("script_table");
+
+		script_table2.addCol("MARKET", COL_TYPE_ENUM.COL_STRING);
+		script_table2.addCol("PRODUCT_ID", COL_TYPE_ENUM.COL_INT);
+		script_table2.addCol("EXPIRY_YEAR", COL_TYPE_ENUM.COL_INT);
+		script_table2.addCol("EXPIRY_MONTH", COL_TYPE_ENUM.COL_INT;
+		script_table2.addCol("FIRST_TRADING_DATE", COL_TYPE_ENUM.COL_STRING);
+		script_table2.addCol("LAST_TRADING_DATE", COL_TYPE_ENUM.COL_STRING);
+		script_table2.addCol("EXPIRY_DATE", COL_TYPE_ENUM.COL_STRING);
+		script_table2.addCol("QUANTITY",COL_TYPE_ENUM.COL_INT);
+		script_table2.addCol("UNIT", COL_TYPE_ENUM.COL_STRING);
+	
+		script_table2.inputFromCSVFile(filename);
+
+		// script_table2.viewTable();
+
+		script_table2.addCol("PRICE",COL_TYPE_ENUM.COL_INT);
+		script_table2.addCol("CURRENCY", COL_TYPE_ENUM.COL_INT);
+		
+		script_table1.copycol('PRICE',script_table2,'PRICE');
+		script_table1.copycol('CURRENCY',script_table2,'CURRENCY');
+		
+		
+		// Now we stored the tables and have also appended the column which was not commont to bith the tables as well 
+		// Our next task is to convert all the price to USD , for this purpose we would be using the get and the set method 
+		int NR=script_table2.getNumRows();
+		int colNum=script_table2.getColNum('Price');
+		
+		for (int i=0;i<NR;i++){
+			int currValue=script_table2.getInt(colNum,i);
+			String curr=script_table2.getString(colNum+1,i);
+			if (curr=='EUR'){
+				currValue*=1.0361;
+			}
+			else if (curr=='INR'){
+				currValue/=87;
+			}
+			else{
+				currValue*=0.23;
+			}
+			script_table2.setInt(colNum,i,currValue);
+			script_table2.setString(colNum+1,i,'USD');
+		}
+		
+		
+		
+		
+		colNum=script_table2.getColNum('QUANTITY');
+		for (int i=0;i<NR;i++){
+			int x=script_table2.getInt(colNum,i);
+				String unit=script_table2.getString(colNum+1,i);
+				if (unit=='gW'){
+					x*=1000;
+				}
+				else if (unit=='kW'){
+					x/=1000;
+				}
+			if (x>2){
+				script.table2.delRow(i);
+				i++;
+			}
+			
+		}
+		
+		
+		// THe next task given by Adarsh is to sort the expiry dates 
+		script_table2.sort('EXPIRY_DATE');
+		
+		// We will approach is very simply we get the julian Date from the rows (TableClassRefereance)  and then use the getMonth(int Jul) from the OCalendar Class 
+		// Finally just convert it and see the difference if its 5 or not 
+		int currDate=today();  // This is in Julian Date format
+		colNum=script_table2.getColNum('EXPIRY_DATE');
+		int currMonth=getMonth(currDate);
+		for (int i=0;i<NR;i++){
+			int date=script_table2.getDate(colNum,i);
+			int month=getMonth(date);
+			if (!(currMonth-month>0 && currMonth-month<=5)){
+				script_table2.delRow(i);
+				i++;
+			}	
+		}
+		
+		
+		script_table2.excelSave("c:/misc/final+""+.xls");
+
+
+		script_table2.destroy();
+
+		script_table1.destroy();
+ 
+		
+
+
+	}
+}

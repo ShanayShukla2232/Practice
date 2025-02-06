@@ -1,0 +1,51 @@
+		import com.olf.openjvs.*;
+		import com.olf.openjvs.enums.*;
+		
+		// This is adding th csv file table and then storing it in the form of table in openjvs
+		String filename;
+		Table script_table;
+ 
+		filename = "C:/data/TOF_scripts.txt";
+ 
+		script_table = Table.tableNew();
+ 
+		script_table.setTableTitle("script_table");
+ 
+		script_table.inputFromCSVFile(filename);
+ 
+		script_table.viewTable();
+		
+		
+		// So we have successfully stored the table from the csv file into the script_table type table 
+		// Now our next steps are to add in the columns to the script_table that contains the instance of the table from the .csv file import done above
+
+		script_table.addCol("DepID", COL_TYPE_ENUM.COL_INT, "DepID");
+		script_table.addCol("DepName", COL_TYPE_ENUM.COL_STRING, "DepName");
+		script_table.addCol("NumEmp", COL_TYPE_ENUM.COL_INT, "NumEmp");
+		script_table.addCol("Location", COL_TYPE_ENUM.COL_STRING, "Location");
+		
+		
+		
+		// So now we have added in more columns to our table imported 
+		// Our next steps include setting the following to the reference table which will be available in our user_test
+		
+		Ask.setRefTable (script_table,user_test);
+		
+		
+		// We will also copy the column format as both can vary in nature by using the copyColFormat	(	String 	src_col,	 Table 	dest_table,	 String 	dest_col )	
+			script_table.copyColFormat(DepID,user_test,userId);
+			script_table.copyColFormat(DepName,user_test,UserDep);
+			script_table.copyColFormat(NumEmp,user_test,UserEmpID);
+			script_table.copyColFormat(Location,user_test,userVenue);
+	
+		
+		// Our next steps include adding in the memory table to the user_test 
+		// Since we have already set the reference of the user_test set so now we can use the function 
+		// int copyRowAddAllByColName	(	Table 	dest_table	 ) 	throws com.olf.openjvs.OException
+		
+		user_test.copyRowAddAllByColName(Table script_table)throws com.olf.openjvs.OException;
+		
+	
+		
+		
+		

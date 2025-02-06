@@ -1,0 +1,25 @@
+// We would be using the copyRowAddRange function .. 
+// Basically this function is very useful to define a range and then add them to the destination table 
+
+
+import com.olf.openjvs.*;
+import com.olf.openjvs.enums.*;
+
+public class SampleScript implements IScript
+{
+	public void execute(IContainerContext context) throws OException
+	{
+		Table underlyings ,work_table= Util.NULL_TABLE;              // Creating an instance of table which is initially set to null 
+		int start_tran_type_row=0, end_tran_type_row=9;
+
+		OConsole.oprint("\nRetrieving the Underlying Notnl");
+		user_table = ab_tran.cloneTable();    // Cloning the ab_tran table to underlyings 
+		work_table.group("tran_type");
+		start_tran_type_row = work_table.findIntRange("tran_type", start_deal_row, end_deal_row,
+				18, SEARCH_ENUM.FIRST_IN_GROUP);
+		if (start_tran_type_row > 0){
+			ab_tran.copyRowAddRange(start_tran_type_row, end_tran_type_row, user_table);
+			// Now delete these rows from the work table.
+		}
+	}
+}
