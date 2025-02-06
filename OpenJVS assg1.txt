@@ -7,7 +7,9 @@
  
 		filename = "C:/data/TOF_scripts.txt";
  
-		script_table999 = Table.tableNew();
+
+		script_table222 = Table.tableNew();
+
  
 		script_table.setTableTitle("script_table");
  
